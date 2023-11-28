@@ -50,8 +50,8 @@ public class QuestionServiceConfig {
             .build();
     }
 
-    public @Bean QuestionDao questionDao() {
-        QuestionMapper questionMapper = new QuestionMapperBuilder(this.session()).build();
-        return questionMapper.questionDao(keyspaceName);
-    }
+    // public @Bean QuestionDao questionDao() {
+    //     QuestionMapper questionMapper = new QuestionMapperBuilder(this.session()).build();
+    //     return questionMapper.questionDao(keyspaceName);
+    // }
 }

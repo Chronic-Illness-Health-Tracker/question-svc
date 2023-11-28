@@ -4,7 +4,7 @@ import com.datastax.oss.driver.api.core.PagingIterable;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Query;
 
-@Dao
+//@Dao
 public interface QuestionDao {
 
     // @Query("SELECT * FROM questions.question_answers WHERE answer_id= :answerId  ALLOW FILTERING")

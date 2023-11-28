@@ -9,6 +9,6 @@ import com.datastax.oss.driver.api.mapper.annotations.Mapper;
 @Mapper
 public interface QuestionMapper {
 
-    @DaoFactory
-    QuestionDao questionDao(@DaoKeyspace String keyspace);
+   // @DaoFactory
+   // QuestionDao questionDao(@DaoKeyspace String keyspace);
 }

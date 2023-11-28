@@ -2,7 +2,6 @@ package com.helphi.question.grpc;
 
 import com.helphi.api.Answer;
 import com.helphi.api.Question;
-import com.helphi.api.grpc.ErrorResponse;
 import com.helphi.api.grpc.GetConditionQuestionsReply;
 import com.helphi.api.grpc.GetConditionQuestionsRequest;
 import com.helphi.api.grpc.GetQuestionReply;
@@ -16,6 +15,9 @@ import com.helphi.api.grpc.getUsersResponsesForConditionRequest;
 import com.helphi.question.svc.QuestionSvc;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +34,7 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
      
         if (request.getQuestionId().isBlank()) {
             responseObserver.onError(
-                io.grpc.Status.INVALID_ARGUMENT.withDescription("QuestionId cannot be empty")
+                io.grpc.Status.INVALID_ARGUMENT.withDescription("questionId cannot be empty")
                 .asRuntimeException());
             return;
         }
@@ -62,6 +64,36 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     @Override
     public void getConditionQuestions(GetConditionQuestionsRequest request,
         StreamObserver<GetConditionQuestionsReply> responseObserver) {
+
+        if (request.getConditionId().isBlank()) {
+            responseObserver.onError(
+                io.grpc.Status.INVALID_ARGUMENT.withDescription("conditionId cannot be empty")
+                .asRuntimeException());
+            return;
+        }
+
+        List<Question> questions = questionService.getConditionQuestions(request.getConditionId());
+
+        for (Question question : questions) {
+
+            Answer answer = question.getAnswer();
+
+            com.helphi.api.grpc.Answer grpcAnswer = com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswerId(answer.getAnswerId())
+                .setAnswerText(answer.getAnswerText())
+                .setAnswerValue(answer.getAnswerValue())
+                .build();
+
+            com.helphi.api.grpc.Question grpcQuestion = com.helphi.api.grpc.Question.newBuilder()
+                .setConditionId(question.getConditionId())
+                .setAnswer(grpcAnswer)
+                .build();
+                    
+                GetConditionQuestionsReply response = GetConditionQuestionsReply.newBuilder()
+                //.setQuestion(grpcQuestion).set
+                .build();
+            
+        }
 
         GetConditionQuestionsReply response = GetConditionQuestionsReply.newBuilder().build();
         responseObserver.onNext(response);
