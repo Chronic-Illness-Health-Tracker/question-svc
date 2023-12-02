@@ -11,6 +11,12 @@ import com.helphi.api.grpc.GetConditionQuestionsReply;
 import com.helphi.api.grpc.GetConditionQuestionsRequest;
 import com.helphi.api.grpc.GetQuestionRequest;
 import com.helphi.api.grpc.GetUserReponseRequest;
+import com.helphi.api.grpc.GetUserReponsesReply;
+import com.helphi.api.grpc.GetUserReponsesRequest;
+import com.helphi.api.grpc.GetUsersResponsesForConditionRequest;
+import com.helphi.api.grpc.QuestionRequest;
+import com.helphi.api.grpc.TIME;
+import com.helphi.api.grpc.Timescale;
 import com.helphi.question.svc.QuestionSvc;
 import io.grpc.internal.testing.StreamRecorder;
 import java.time.Instant;
@@ -242,4 +248,334 @@ public class GrpcQuestionServiceTests{
             .setBucket(1)
             .build(), response);
     }
+
+    @Test
+    public void getUserResponseReturnsNull() throws Exception {
+        Mockito.lenient().when(questionSvc.getUserResponse("8dfe2341-6f82-4870-85bc-00f65ce89cae",
+            "d4fae303-77a1-41ae-b220-c21ae791cb83"))
+            .thenReturn(null);
+
+        GetUserReponseRequest request = GetUserReponseRequest.newBuilder()
+            .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
+            .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.UserResponse> responseObserver = StreamRecorder.create();
+
+        testedClass.getUserResponse(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<com.helphi.api.grpc.UserResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+        com.helphi.api.grpc.UserResponse response = results.get(0);
+
+        assertNull(response);
+    }
+
+    @Test
+    public void getUsersResponsesReturnsCorrectResponse() throws Exception {
+        Instant timestampInstant = Instant.now();
+
+        Timescale timescale = Timescale.newBuilder()
+        .setTime(TIME.DAYS)
+        .setDuration(2)
+        .build();
+
+        Mockito.lenient().when(questionSvc.getUserResponses("8dfe2341-6f82-4870-85bc-00f65ce89cae", timescale))
+            .thenReturn(new ArrayList<>(Arrays.asList(
+                UserResponse.builder()
+                .responseId(7136393980224212992L)
+                .questionId(7136394121815527424L)
+                .conditionId("2292f893-dcf4-4756-b727-589167389df9")
+                .userId("afb79788-b05e-47aa-afbc-85c48626f49f")
+                .userName("JoeBloggs")
+                .responseText("Yes")
+                .responseValue(2)
+                .answerTimestamp(timestampInstant)
+                .bucket(1)
+                .build(),
+                UserResponse.builder()
+                .responseId(7136393980224216499L)
+                .questionId(7136394121815277454L)
+                .conditionId("2292a893-dc24-4754-b527-589167389df9")
+                .userId("acb72788-b05e-48aa-bfdc-14c48626f49b")
+                .userName("JoeBloggs")
+                .responseText("No")
+                .responseValue(1)
+                .answerTimestamp(timestampInstant)
+                .bucket(1)
+                .build()
+            )));
+
+        GetUserReponsesRequest request = GetUserReponsesRequest.newBuilder()
+            .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
+            .setTimescale(timescale)
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = StreamRecorder.create();
+
+        testedClass.getUsersResponses(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<GetUserReponsesReply> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        GetUserReponsesReply  response = results.get(0);
+        List<com.helphi.api.grpc.UserResponse> questions = response.getResponseList();
+
+        assertEquals(2, questions.size());
+
+        assertEquals(
+            GetUserReponsesReply.newBuilder()
+                .addAllResponse(
+                    Arrays.asList(
+                        com.helphi.api.grpc.UserResponse.newBuilder()
+                            .setResponseId(7136393980224212992L)
+                            .setQuestionId(7136394121815527424L)
+                            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+                            .setUserId("afb79788-b05e-47aa-afbc-85c48626f49f")
+                            .setUserName("JoeBloggs")
+                            .setResponseText("Yes")
+                            .setResponseValue(2)
+                            .setAnswerTimestamp(
+                                com.google.protobuf.Timestamp.newBuilder()
+                                .setSeconds(timestampInstant.getEpochSecond())
+                                .setNanos(timestampInstant.getNano())
+                                .build()
+                            )
+                            .setBucket(1)
+                            .build(),
+                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        .setResponseId(7136393980224216499L)
+                        .setQuestionId(7136394121815277454L)
+                        .setConditionId("2292a893-dc24-4754-b527-589167389df9")
+                        .setUserId("acb72788-b05e-48aa-bfdc-14c48626f49b")
+                        .setUserName("JoeBloggs")
+                        .setResponseText("No")
+                        .setResponseValue(1)
+                        .setAnswerTimestamp(
+                            com.google.protobuf.Timestamp.newBuilder()
+                            .setSeconds(timestampInstant.getEpochSecond())
+                            .setNanos(timestampInstant.getNano())
+                            .build()
+                        )
+                        .setBucket(1)
+                        .build()
+                    )
+                )
+            .build()
+        , response);
+    }
+
+    @Test
+    public void getUsersResponsesReturnsNull() throws Exception {
+        Timescale timescale = Timescale.newBuilder()
+            .setTime(TIME.DAYS)
+            .setDuration(2)
+            .build();
+
+        Mockito.lenient().when(questionSvc.getUserResponses("8dfe2341-6f82-4870-85bc-00f65ce89cae", timescale))
+            .thenReturn(null);
+
+        GetUserReponsesRequest request = GetUserReponsesRequest.newBuilder()
+            .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
+            .setTimescale(timescale)
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = StreamRecorder.create();
+
+        testedClass.getUsersResponses(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<com.helphi.api.grpc.GetUserReponsesReply> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+        com.helphi.api.grpc.GetUserReponsesReply response = results.get(0);
+
+        assertNull(response);
+    }
+
+    @Test
+    public void getUsersResponsesForConditionReturnCorrectValue() throws Exception {
+        Instant timestampInstant = Instant.now();
+
+        Timescale timescale = Timescale.newBuilder()
+        .setTime(TIME.DAYS)
+        .setDuration(2)
+        .build();
+
+        Mockito.lenient().when(questionSvc.getUsersResponsesForCondition("8dfe2341-6f82-4870-85bc-00f65ce89cae", 
+            "2292f893-dcf4-4756-b727-589167389df9", timescale))
+            .thenReturn(new ArrayList<>(Arrays.asList(
+                UserResponse.builder()
+                .responseId(7136393980224216499L)
+                .questionId(7136394121815277454L)
+                .conditionId("2292f893-dcf4-4756-b727-589167389df9")
+                .userId("afb79788-b05e-47aa-afbc-85c48626f49f")
+                .userName("JoeBloggs")
+                .responseText("Yes")
+                .responseValue(2)
+                .answerTimestamp(timestampInstant)
+                .bucket(1)
+                .build(),
+                UserResponse.builder()
+                .responseId(7136393980224212992L)
+                .questionId(7136394121815527424L)
+                .conditionId("2292a893-dc24-4754-b527-589167389df9")
+                .userId("acb72788-b05e-48aa-bfdc-14c48626f49b")
+                .userName("JoeBloggs")
+                .responseText("No")
+                .responseValue(1)
+                .answerTimestamp(timestampInstant)
+                .bucket(1)
+                .build()
+            )));
+
+        GetUsersResponsesForConditionRequest request = GetUsersResponsesForConditionRequest.newBuilder()
+            .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
+            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+            .setTimescale(timescale)
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = StreamRecorder.create();
+
+        testedClass.getUsersResponsesForCondition(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<GetUserReponsesReply> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        GetUserReponsesReply  response = results.get(0);
+        List<com.helphi.api.grpc.UserResponse> questions = response.getResponseList();
+
+        assertEquals(2, questions.size());
+
+        assertEquals(
+            GetUserReponsesReply.newBuilder()
+                .addAllResponse(
+                    Arrays.asList(
+                        com.helphi.api.grpc.UserResponse.newBuilder()
+                            .setResponseId(7136393980224216499L)
+                            .setQuestionId(7136394121815277454L)
+                            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+                            .setUserId("afb79788-b05e-47aa-afbc-85c48626f49f")
+                            .setUserName("JoeBloggs")
+                            .setResponseText("Yes")
+                            .setResponseValue(2)
+                            .setAnswerTimestamp(
+                                com.google.protobuf.Timestamp.newBuilder()
+                                .setSeconds(timestampInstant.getEpochSecond())
+                                .setNanos(timestampInstant.getNano())
+                                .build()
+                            )
+                            .setBucket(1)
+                            .build(),
+                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        .setResponseId(7136393980224212992L)
+                        .setQuestionId(7136394121815527424L)
+                        .setConditionId("2292a893-dc24-4754-b527-589167389df9")
+                        .setUserId("acb72788-b05e-48aa-bfdc-14c48626f49b")
+                        .setUserName("JoeBloggs")
+                        .setResponseText("No")
+                        .setResponseValue(1)
+                        .setAnswerTimestamp(
+                            com.google.protobuf.Timestamp.newBuilder()
+                            .setSeconds(timestampInstant.getEpochSecond())
+                            .setNanos(timestampInstant.getNano())
+                            .build()
+                        )
+                        .setBucket(1)
+                        .build()
+                    )
+                )
+            .build()
+        , response);
+    }
+
+    @Test
+    public void addQuestionReturnsCorrectResult() throws Exception {
+        Mockito.lenient().when(questionSvc.addQuestion(
+            new Question(Long.MIN_VALUE, "2292f893-dcf4-4756-b727-589167389df9",
+                new Answer(Long.MIN_VALUE, Long.MIN_VALUE, "Yes", Integer.MIN_VALUE))
+        )).thenReturn(new Question(7136464066389741568L, "2292f893-dcf4-4756-b727-589167389df9",
+            new Answer(7136464503469772800L, 7136464066389741568L, "Yes", 2)));
+
+            QuestionRequest request = QuestionRequest.newBuilder()
+            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswerText("Yes"))
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+
+        testedClass.addQuestion(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        com.helphi.api.grpc.Question response = results.get(0);
+
+        assertEquals(com.helphi.api.grpc.Question.newBuilder()
+            .setQuestionId(7136464066389741568L)
+            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswerId(7136464503469772800L)
+                .setQuestionId(7136464066389741568L)
+                .setAnswerText("Yes")
+                .setAnswerValue(2)
+            )
+            .build()
+        , response);
+    }
+
+    @Test
+    public void addQuestionReturnsNull() throws Exception {
+        Mockito.lenient().when(questionSvc.addQuestion(
+            new Question(Long.MIN_VALUE, "2292f893-dcf4-4756-b727-589167389df9",
+                new Answer(Long.MIN_VALUE, Long.MIN_VALUE, "Yes", Integer.MIN_VALUE))
+        )).thenReturn(null);
+
+            QuestionRequest request = QuestionRequest.newBuilder()
+            .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
+            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswerText("Yes"))
+            .build();
+
+        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+
+        testedClass.addQuestion(request, responseObserver);
+        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
+            fail("The call did not terminate in time");
+        }
+
+        assertNull(responseObserver.getError());
+
+        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+        com.helphi.api.grpc.Question response = results.get(0);
+
+        assertNull(response);
+    }
+
 }
+

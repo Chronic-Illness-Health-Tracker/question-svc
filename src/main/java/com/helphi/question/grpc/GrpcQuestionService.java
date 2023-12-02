@@ -151,10 +151,10 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     public void addQuestion(QuestionRequest request, 
         StreamObserver<com.helphi.api.grpc.Question> responseObserver) {
 
-        Answer answerToAdd = new Answer(-1L, -1L, request.getAnswer().getAnswerText(), 
-                request.getAnswer().getAnswerValue());
+        Answer answerToAdd = new Answer(Long.MIN_VALUE, Long.MIN_VALUE, request.getAnswer().getAnswerText(), 
+                Integer.MIN_VALUE);
 
-        Question questionToAdd = new Question(-1L, request.getConditionId(), answerToAdd);
+        Question questionToAdd = new Question(Long.MIN_VALUE, request.getConditionId(), answerToAdd);
 
         Question addedQuestion = questionService.addQuestion(questionToAdd);
 
