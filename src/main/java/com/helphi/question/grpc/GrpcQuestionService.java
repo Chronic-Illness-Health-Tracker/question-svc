@@ -20,8 +20,10 @@ import com.helphi.api.grpc.QuestionServiceGrpc.QuestionServiceImplBase;
 import com.helphi.api.grpc.RequestReply;
 import com.helphi.api.mapper.QuestionMapper;
 import com.helphi.api.mapper.UserResponseMapper;
-import com.helphi.question.svc.QuestionSvc;
+import com.helphi.question.svc.IquestionService;
 import io.grpc.stub.StreamObserver;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +39,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class GrpcQuestionService extends QuestionServiceImplBase {
 
     @Autowired
-    private final QuestionSvc questionService;
+    private final IquestionService questionService;
 
     @Override
     public void getQuestion(GetQuestionRequest request,
         StreamObserver<com.helphi.api.grpc.Question> responseObserver) {
    
-        Question question = questionService.getQuestion(request.getQuestionId());
+        Question question = questionService.getQuestion(request.getQuestionId(), 
+            request.getConditionId());
         QuestionMapper questionMapper = new QuestionMapper();
         com.helphi.api.grpc.Question grpcQuestion = questionMapper.mapToGrpc(question);
 
@@ -151,10 +154,11 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     public void addQuestion(QuestionRequest request, 
         StreamObserver<com.helphi.api.grpc.Question> responseObserver) {
 
-        Answer answerToAdd = new Answer(Long.MIN_VALUE, Long.MIN_VALUE, request.getAnswer().getAnswerText(), 
-                Integer.MIN_VALUE);
+        Answer answerToAdd = new Answer(Long.MIN_VALUE, Long.MIN_VALUE, 
+            request.getAnswer().getAnswerText(), Integer.MIN_VALUE);
 
-        Question questionToAdd = new Question(Long.MIN_VALUE, request.getConditionId(), answerToAdd);
+        Question questionToAdd = new Question(Long.MIN_VALUE, request.getConditionId(), 
+            answerToAdd, null);
 
         Question addedQuestion = questionService.addQuestion(questionToAdd);
 

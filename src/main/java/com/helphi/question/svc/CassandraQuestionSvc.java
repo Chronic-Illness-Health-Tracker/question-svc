@@ -1,27 +1,33 @@
 package com.helphi.question.svc;
 
+import com.datastax.oss.driver.api.core.PagingIterable;
 import com.helphi.api.Question;
 import com.helphi.api.UserResponse;
 import com.helphi.api.grpc.RequestReply;
 import com.helphi.api.grpc.Timescale;
+import com.helphi.question.dao.QuestionDao;
+
+import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** Service for question related business logic.*/
 @Service
 @RequiredArgsConstructor
-public class QuestionSvc {
+public class CassandraQuestionSvc implements IquestionService {
 
-    // @Autowired
-    // private final QuestionDao questionDao;
+    @Autowired
+    private final QuestionDao questionDao;
 
-    public Question getQuestion(long questionId) {
-        return null;
+    public Question getQuestion(long questionId, String conditonId) {
+        return questionDao.getQuestion(questionId, conditonId);
     }
 
     public List<Question> getConditionQuestions(String conditionId) {
-        return null;
+        PagingIterable<Question> dbResult = questionDao.getConditionQuestions(conditionId);
+        return dbResult.all();
     }
 
     public UserResponse getUserResponse(String userId, String conditonId) {
@@ -38,7 +44,15 @@ public class QuestionSvc {
     }
 
     public Question addQuestion(Question question) {
-        return null;
+
+        question.setQuestionId(123456L);
+        question.getAnswer().setAnswerId(82641L);
+
+        questionDao.addQuestion(question.getQuestionId(), question.getConditionId(), 
+            question.getAnswer().getAnswerId(), question.getAnswer().getAnswerText(), 
+            question.getAnswer().getAnswerValue(), Instant.now());
+
+        return this.getQuestion(question.getQuestionId(), question.getConditionId());
     }
 
     public Question updateQuestion(long questionId, Question question) {
@@ -72,6 +86,4 @@ public class QuestionSvc {
     public RequestReply deleteAllUserResponses(String userId) { 
         return null;
     }
-
-
 }
