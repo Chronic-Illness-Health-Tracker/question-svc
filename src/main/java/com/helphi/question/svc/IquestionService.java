@@ -1,9 +1,9 @@
 package com.helphi.question.svc;
 
-import com.helphi.api.Question;
-import com.helphi.api.UserResponse;
 import com.helphi.api.grpc.RequestReply;
 import com.helphi.api.grpc.Timescale;
+import com.helphi.question.api.Question;
+import com.helphi.question.api.UserResponse;
 
 import java.util.List;
 

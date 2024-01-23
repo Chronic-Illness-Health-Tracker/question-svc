@@ -5,8 +5,8 @@ import java.time.Instant;
 import com.datastax.oss.driver.api.core.PagingIterable;
 import com.datastax.oss.driver.api.mapper.annotations.Dao;
 import com.datastax.oss.driver.api.mapper.annotations.Query;
-import com.helphi.api.Question;
-import com.helphi.api.UserResponse;
+import com.helphi.question.api.Question;
+import com.helphi.question.api.UserResponse;
 
 @Dao
 public interface QuestionDao {

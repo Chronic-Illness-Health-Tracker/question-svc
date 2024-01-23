@@ -1,8 +1,5 @@
 package com.helphi.question.grpc;
 
-import com.helphi.api.Answer;
-import com.helphi.api.Question;
-import com.helphi.api.UserResponse;
 import com.helphi.api.grpc.DeleteAllQuestionsRequest;
 import com.helphi.api.grpc.DeleteQuestionRequest;
 import com.helphi.api.grpc.DeleteUserResponseRequest;
@@ -18,12 +15,13 @@ import com.helphi.api.grpc.GetUsersResponsesForConditionRequest;
 import com.helphi.api.grpc.QuestionRequest;
 import com.helphi.api.grpc.QuestionServiceGrpc.QuestionServiceImplBase;
 import com.helphi.api.grpc.RequestReply;
-import com.helphi.api.mapper.QuestionMapper;
-import com.helphi.api.mapper.UserResponseMapper;
+import com.helphi.question.api.Answer;
+import com.helphi.question.api.Question;
+import com.helphi.question.api.UserResponse;
+import com.helphi.question.api.mapper.QuestionMapper;
+import com.helphi.question.api.mapper.UserResponseMapper;
 import com.helphi.question.svc.IquestionService;
 import io.grpc.stub.StreamObserver;
-
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
