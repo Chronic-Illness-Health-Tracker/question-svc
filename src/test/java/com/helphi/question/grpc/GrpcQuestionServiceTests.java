@@ -4,19 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import com.helphi.api.grpc.GetConditionQuestionsReply;
-import com.helphi.api.grpc.GetConditionQuestionsRequest;
-import com.helphi.api.grpc.GetQuestionRequest;
-import com.helphi.api.grpc.GetUserReponseRequest;
-import com.helphi.api.grpc.GetUserReponsesReply;
-import com.helphi.api.grpc.GetUserReponsesRequest;
-import com.helphi.api.grpc.GetUsersResponsesForConditionRequest;
-import com.helphi.api.grpc.QuestionRequest;
-import com.helphi.api.grpc.TIME;
-import com.helphi.api.grpc.Timescale;
 import com.helphi.question.api.Answer;
 import com.helphi.question.api.Question;
 import com.helphi.question.api.UserResponse;
+import com.helphi.question.api.grpc.*;
 import com.helphi.question.svc.CassandraQuestionSvc;
 import io.grpc.internal.testing.StreamRecorder;
 import java.time.Instant;
@@ -65,7 +56,7 @@ public class GrpcQuestionServiceTests{
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.Question> responseObserver = StreamRecorder.create();
 
         testedClass.getQuestion(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -73,14 +64,14 @@ public class GrpcQuestionServiceTests{
         }
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.Question> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.Question response = results.get(0);
+        com.helphi.question.api.grpc.Question response = results.get(0);
 
-        assertEquals(com.helphi.api.grpc.Question.newBuilder()
+        assertEquals(com.helphi.question.api.grpc.Question.newBuilder()
                     .setQuestionId(7135745314081738752L)
                     .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
-                    .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                    .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                         .setAnswerId(7135360146863034368L)
                         .setQuestionId(7135365497075273728L)
                         .setAnswerText("Yes")
@@ -104,7 +95,7 @@ public class GrpcQuestionServiceTests{
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.Question> responseObserver = StreamRecorder.create();
 
         testedClass.getQuestion(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -113,9 +104,9 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.Question> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.Question response = results.get(0);
+        com.helphi.question.api.grpc.Question response = results.get(0);
 
         assertNull(response);
     }
@@ -155,17 +146,17 @@ public class GrpcQuestionServiceTests{
         List<GetConditionQuestionsReply> results = responseObserver.getValues();
         assertEquals(1, results.size());
         GetConditionQuestionsReply response = results.get(0);
-        List<com.helphi.api.grpc.Question> questions = response.getQuestionsList();
+        List<com.helphi.question.api.grpc.Question> questions = response.getQuestionsList();
 
         assertEquals(2, questions.size());
 
         assertEquals(
             GetConditionQuestionsReply.newBuilder().addAllQuestions(
             Arrays.asList(
-                com.helphi.api.grpc.Question.newBuilder()
+                com.helphi.question.api.grpc.Question.newBuilder()
                 .setQuestionId(7135745314081738752L)
                 .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
-                .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                     .setAnswerId(7135360146863034368L)
                     .setQuestionId(7135365497075273728L)
                     .setAnswerText("Yes")
@@ -176,10 +167,10 @@ public class GrpcQuestionServiceTests{
                     .setNanos(timeInstant.getNano())
                     .build())
                 .build(),       
-                com.helphi.api.grpc.Question.newBuilder()
+                com.helphi.question.api.grpc.Question.newBuilder()
                 .setQuestionId(7135745314981832742L)
                 .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
-                .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+                .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                     .setAnswerId(7135369502035808256L)
                     .setQuestionId(7135369523703582720L)
                     .setAnswerText("No")
@@ -242,7 +233,7 @@ public class GrpcQuestionServiceTests{
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.UserResponse> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.UserResponse> responseObserver = StreamRecorder.create();
 
         testedClass.getUserResponse(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -251,11 +242,11 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.UserResponse> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.UserResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.UserResponse response = results.get(0);
+        com.helphi.question.api.grpc.UserResponse response = results.get(0);
 
-        assertEquals(com.helphi.api.grpc.UserResponse.newBuilder()
+        assertEquals(com.helphi.question.api.grpc.UserResponse.newBuilder()
             .setResponseId(7135657974130806784L)
             .setQuestionId(7135659494918328320L)
             .setConditionId("1825d5fd-059a-46d6-9d51-c220eba4427f")
@@ -284,7 +275,7 @@ public class GrpcQuestionServiceTests{
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.UserResponse> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.UserResponse> responseObserver = StreamRecorder.create();
 
         testedClass.getUserResponse(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -293,9 +284,9 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.UserResponse> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.UserResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.UserResponse response = results.get(0);
+        com.helphi.question.api.grpc.UserResponse response = results.get(0);
 
         assertNull(response);
     }
@@ -341,7 +332,7 @@ public class GrpcQuestionServiceTests{
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = 
+        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponses(request, responseObserver);
@@ -355,7 +346,7 @@ public class GrpcQuestionServiceTests{
         assertEquals(1, results.size());
 
         GetUserReponsesReply  response = results.get(0);
-        List<com.helphi.api.grpc.UserResponse> questions = response.getResponseList();
+        List<com.helphi.question.api.grpc.UserResponse> questions = response.getResponseList();
 
         assertEquals(2, questions.size());
 
@@ -363,7 +354,7 @@ public class GrpcQuestionServiceTests{
             GetUserReponsesReply.newBuilder()
                 .addAllResponse(
                     Arrays.asList(
-                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        com.helphi.question.api.grpc.UserResponse.newBuilder()
                             .setResponseId(7136393980224212992L)
                             .setQuestionId(7136394121815527424L)
                             .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
@@ -379,7 +370,7 @@ public class GrpcQuestionServiceTests{
                             )
                             .setBucket(1)
                             .build(),
-                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        com.helphi.question.api.grpc.UserResponse.newBuilder()
                         .setResponseId(7136393980224216499L)
                         .setQuestionId(7136394121815277454L)
                         .setConditionId("2292a893-dc24-4754-b527-589167389df9")
@@ -416,7 +407,7 @@ public class GrpcQuestionServiceTests{
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = 
+        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponses(request, responseObserver);
@@ -426,9 +417,9 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.GetUserReponsesReply> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.GetUserReponsesReply> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.GetUserReponsesReply response = results.get(0);
+        com.helphi.question.api.grpc.GetUserReponsesReply response = results.get(0);
 
         assertNull(response);
     }
@@ -477,7 +468,7 @@ public class GrpcQuestionServiceTests{
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.GetUserReponsesReply> responseObserver = 
+        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponsesForCondition(request, responseObserver);
@@ -491,7 +482,7 @@ public class GrpcQuestionServiceTests{
         assertEquals(1, results.size());
 
         GetUserReponsesReply  response = results.get(0);
-        List<com.helphi.api.grpc.UserResponse> questions = response.getResponseList();
+        List<com.helphi.question.api.grpc.UserResponse> questions = response.getResponseList();
 
         assertEquals(2, questions.size());
 
@@ -499,7 +490,7 @@ public class GrpcQuestionServiceTests{
             GetUserReponsesReply.newBuilder()
                 .addAllResponse(
                     Arrays.asList(
-                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        com.helphi.question.api.grpc.UserResponse.newBuilder()
                             .setResponseId(7136393980224216499L)
                             .setQuestionId(7136394121815277454L)
                             .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
@@ -515,7 +506,7 @@ public class GrpcQuestionServiceTests{
                             )
                             .setBucket(1)
                             .build(),
-                        com.helphi.api.grpc.UserResponse.newBuilder()
+                        com.helphi.question.api.grpc.UserResponse.newBuilder()
                         .setResponseId(7136393980224212992L)
                         .setQuestionId(7136394121815527424L)
                         .setConditionId("2292a893-dc24-4754-b527-589167389df9")
@@ -550,11 +541,11 @@ public class GrpcQuestionServiceTests{
 
         QuestionRequest request = QuestionRequest.newBuilder()
             .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
-            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+            .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                 .setAnswerText("Yes"))
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.Question> responseObserver = StreamRecorder.create();
 
         testedClass.addQuestion(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -563,15 +554,15 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.Question> results = responseObserver.getValues();
         assertEquals(1, results.size());
 
-        com.helphi.api.grpc.Question response = results.get(0);
+        com.helphi.question.api.grpc.Question response = results.get(0);
 
-        assertEquals(com.helphi.api.grpc.Question.newBuilder()
+        assertEquals(com.helphi.question.api.grpc.Question.newBuilder()
             .setQuestionId(7136464066389741568L)
             .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
-            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+            .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                 .setAnswerId(7136464503469772800L)
                 .setQuestionId(7136464066389741568L)
                 .setAnswerText("Yes")
@@ -596,11 +587,11 @@ public class GrpcQuestionServiceTests{
 
         QuestionRequest request = QuestionRequest.newBuilder()
             .setConditionId("2292f893-dcf4-4756-b727-589167389df9")
-            .setAnswer(com.helphi.api.grpc.Answer.newBuilder()
+            .setAnswer(com.helphi.question.api.grpc.Answer.newBuilder()
                 .setAnswerText("Yes"))
             .build();
 
-        StreamRecorder<com.helphi.api.grpc.Question> responseObserver = StreamRecorder.create();
+        StreamRecorder<com.helphi.question.api.grpc.Question> responseObserver = StreamRecorder.create();
 
         testedClass.addQuestion(request, responseObserver);
         if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
@@ -609,9 +600,9 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.api.grpc.Question> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.Question> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.api.grpc.Question response = results.get(0);
+        com.helphi.question.api.grpc.Question response = results.get(0);
 
         assertNull(response);
     }

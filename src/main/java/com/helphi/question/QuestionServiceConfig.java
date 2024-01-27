@@ -24,10 +24,10 @@ public class QuestionServiceConfig  {
     public QuestionServiceConfig(
         @Value("${db.port}") int dbPort, 
         @Value("${db.contact-point}") String hostname,  
-        @Value("${db.local-datacentre}") String localDatacentre, 
+        @Value("${db.local-datacenter}") String localDatacentre, 
         @Value("${db.keyspace-name}") String keyspaceName,
         @Value("${db.username}") String dbUsername, 
-        @Value("${db.username}") String dbPassword) {     
+        @Value("${db.password}") String dbPassword) {
 
         this.dbPort = dbPort;
         this.hostname = hostname;

@@ -1,7 +1,7 @@
 package com.helphi.question.svc;
 
-import com.helphi.api.grpc.RequestReply;
-import com.helphi.api.grpc.Timescale;
+import com.helphi.question.api.grpc.RequestReply;
+import com.helphi.question.api.grpc.Timescale;
 import com.helphi.question.api.Question;
 import com.helphi.question.api.UserResponse;
 

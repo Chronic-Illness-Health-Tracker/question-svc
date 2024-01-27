@@ -26,7 +26,6 @@ public interface QuestionDao {
         + ":questionId,"
         + ":conditionId,"
         + "{answer_id: :answerId,"
-        + "question_id: :questionId,"
         + "answer_text: :answer,"
         + "answer_value: :answerValue},"
         + ":timestamp"
