@@ -228,7 +228,7 @@ public class GrpcQuestionServiceTests{
                 1
             ));
 
-        GetUserReponseRequest request = GetUserReponseRequest.newBuilder()
+        GetUserResponseRequest request = GetUserResponseRequest.newBuilder()
             .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
@@ -270,7 +270,7 @@ public class GrpcQuestionServiceTests{
             "d4fae303-77a1-41ae-b220-c21ae791cb83"))
             .thenReturn(null);
 
-        GetUserReponseRequest request = GetUserReponseRequest.newBuilder()
+        GetUserResponseRequest request = GetUserResponseRequest.newBuilder()
             .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
             .setConditionId("d4fae303-77a1-41ae-b220-c21ae791cb83")
             .build();
@@ -327,12 +327,12 @@ public class GrpcQuestionServiceTests{
                 .build()
             )));
 
-        GetUserReponsesRequest request = GetUserReponsesRequest.newBuilder()
+        GetUserResponsesRequest request = GetUserResponsesRequest.newBuilder()
             .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
+        StreamRecorder<com.helphi.question.api.grpc.GetUserResponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponses(request, responseObserver);
@@ -342,16 +342,16 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<GetUserReponsesReply> results = responseObserver.getValues();
+        List<GetUserResponsesReply> results = responseObserver.getValues();
         assertEquals(1, results.size());
 
-        GetUserReponsesReply  response = results.get(0);
+        GetUserResponsesReply  response = results.get(0);
         List<com.helphi.question.api.grpc.UserResponse> questions = response.getResponseList();
 
         assertEquals(2, questions.size());
 
         assertEquals(
-            GetUserReponsesReply.newBuilder()
+            GetUserResponsesReply.newBuilder()
                 .addAllResponse(
                     Arrays.asList(
                         com.helphi.question.api.grpc.UserResponse.newBuilder()
@@ -402,12 +402,12 @@ public class GrpcQuestionServiceTests{
             timescale))
             .thenReturn(null);
 
-        GetUserReponsesRequest request = GetUserReponsesRequest.newBuilder()
+        GetUserResponsesRequest request = GetUserResponsesRequest.newBuilder()
             .setUserId("8dfe2341-6f82-4870-85bc-00f65ce89cae")
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
+        StreamRecorder<com.helphi.question.api.grpc.GetUserResponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponses(request, responseObserver);
@@ -417,9 +417,9 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<com.helphi.question.api.grpc.GetUserReponsesReply> results = responseObserver.getValues();
+        List<com.helphi.question.api.grpc.GetUserResponsesReply> results = responseObserver.getValues();
         assertEquals(1, results.size());
-        com.helphi.question.api.grpc.GetUserReponsesReply response = results.get(0);
+        com.helphi.question.api.grpc.GetUserResponsesReply response = results.get(0);
 
         assertNull(response);
     }
@@ -468,7 +468,7 @@ public class GrpcQuestionServiceTests{
             .setTimescale(timescale)
             .build();
 
-        StreamRecorder<com.helphi.question.api.grpc.GetUserReponsesReply> responseObserver =
+        StreamRecorder<com.helphi.question.api.grpc.GetUserResponsesReply> responseObserver =
             StreamRecorder.create();
 
         testedClass.getUsersResponsesForCondition(request, responseObserver);
@@ -478,16 +478,16 @@ public class GrpcQuestionServiceTests{
 
         assertNull(responseObserver.getError());
 
-        List<GetUserReponsesReply> results = responseObserver.getValues();
+        List<GetUserResponsesReply> results = responseObserver.getValues();
         assertEquals(1, results.size());
 
-        GetUserReponsesReply  response = results.get(0);
+        GetUserResponsesReply  response = results.get(0);
         List<com.helphi.question.api.grpc.UserResponse> questions = response.getResponseList();
 
         assertEquals(2, questions.size());
 
         assertEquals(
-            GetUserReponsesReply.newBuilder()
+            GetUserResponsesReply.newBuilder()
                 .addAllResponse(
                     Arrays.asList(
                         com.helphi.question.api.grpc.UserResponse.newBuilder()

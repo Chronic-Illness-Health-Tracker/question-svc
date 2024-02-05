@@ -8,10 +8,10 @@ import com.helphi.question.api.grpc.DeleteUserResponsesRequest;
 import com.helphi.question.api.grpc.GetConditionQuestionsReply;
 import com.helphi.question.api.grpc.GetConditionQuestionsRequest;
 import com.helphi.question.api.grpc.GetQuestionRequest;
-import com.helphi.question.api.grpc.GetUserReponseRequest;
-import com.helphi.question.api.grpc.GetUserReponsesReply;
-import com.helphi.question.api.grpc.GetUserReponsesRequest;
 import com.helphi.question.api.grpc.GetUsersResponsesForConditionRequest;
+import com.helphi.question.api.grpc.GetUserResponsesReply;
+import com.helphi.question.api.grpc.GetUserResponseRequest;
+import com.helphi.question.api.grpc.GetUserResponsesRequest;
 import com.helphi.question.api.grpc.QuestionRequest;
 import com.helphi.question.api.grpc.QuestionServiceGrpc.QuestionServiceImplBase;
 import com.helphi.question.api.grpc.RequestReply;
@@ -79,8 +79,8 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     }
 
     @Override
-    public void getUserResponse(GetUserReponseRequest request, 
-        StreamObserver<com.helphi.question.api.grpc.UserResponse> responseObserver) {
+    public void getUserResponse(GetUserResponseRequest request,
+                                StreamObserver<com.helphi.question.api.grpc.UserResponse> responseObserver) {
 
         UserResponse userResponse = questionService.getUserResponse(request.getUserId(), 
             request.getConditionId());
@@ -94,10 +94,10 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     }
 
     @Override
-    public void getUsersResponses(GetUserReponsesRequest request, 
-        StreamObserver<GetUserReponsesReply> responseObserver) {
+    public void getUsersResponses(GetUserResponsesRequest request,
+                                  StreamObserver<GetUserResponsesReply> responseObserver) {
 
-        GetUserReponsesReply grpcUserResposeReply = null;
+        GetUserResponsesReply grpcUserResposeReply = null;
 
         List<UserResponse> userResponses = questionService.getUserResponses(request.getUserId(), 
             request.getTimescale());
@@ -112,7 +112,7 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
                 grpcUserResponses.add(grpcUserResponse);           
             }
 
-            grpcUserResposeReply = GetUserReponsesReply.newBuilder()
+            grpcUserResposeReply = GetUserResponsesReply.newBuilder()
                 .addAllResponse(grpcUserResponses)
                 .build();
         }
@@ -123,9 +123,9 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
 
     @Override
     public void getUsersResponsesForCondition(GetUsersResponsesForConditionRequest request, 
-        StreamObserver<GetUserReponsesReply> responseObserver) {
+        StreamObserver<GetUserResponsesReply> responseObserver) {
 
-        GetUserReponsesReply grpcUserResposeReply = null;
+        GetUserResponsesReply grpcUserResposeReply = null;
 
         List<UserResponse> userResponses = questionService.getUsersResponsesForCondition(
             request.getUserId(), request.getConditionId(), request.getTimescale());
@@ -140,7 +140,7 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
                 grpcUserResponses.add(grpcUserResponse);           
             }
 
-            grpcUserResposeReply = GetUserReponsesReply.newBuilder()
+            grpcUserResposeReply = GetUserResponsesReply.newBuilder()
                 .addAllResponse(grpcUserResponses)
                 .build();
         }   
