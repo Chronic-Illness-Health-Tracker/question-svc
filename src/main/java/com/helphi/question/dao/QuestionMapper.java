@@ -10,4 +10,8 @@ public interface QuestionMapper {
 
     @DaoFactory
     QuestionDao questionDao(@DaoKeyspace String keyspace);
+    @DaoFactory
+    UserResponseDao userResponseDao(@DaoKeyspace String keyspace);
+    @DaoFactory
+    ConditionCheckInDao conditionCheckInDao(@DaoKeyspace String keyspace);
 }

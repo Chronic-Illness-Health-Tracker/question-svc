@@ -1,9 +1,9 @@
 package com.helphi.question.svc;
 
+import com.helphi.question.api.*;
+import com.helphi.question.api.grpc.ListPatientStatusRequest;
 import com.helphi.question.api.grpc.RequestReply;
 import com.helphi.question.api.grpc.Timescale;
-import com.helphi.question.api.Question;
-import com.helphi.question.api.UserResponse;
 
 import java.util.List;
 
@@ -37,5 +37,12 @@ public interface IquestionService {
     public RequestReply deleteUserResponsesForCondition(String conditionId);
 
     public RequestReply deleteAllUserResponses(String userId);
+
+    public List<PatientStatus> getRecentPatientStatuses(ListPatientStatusRequest request);
+
+    public void addCheckIn(ConditionCheckIn checkIn);
+    public void updateCheckIn(ConditionCheckIn checkIn);
+
+    public PatientStatus getCurrentStatus(String conditionId, String patientId);
     
 }

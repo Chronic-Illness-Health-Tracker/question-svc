@@ -1,14 +1,16 @@
 package com.helphi.question;
 
 import java.net.InetSocketAddress;
+
+import com.datastax.oss.driver.internal.core.type.codec.extras.enums.EnumNameCodec;
+import com.helphi.question.api.QuestionType;
+import com.helphi.question.dao.*;
+import com.helphi.question.svc.id.Snowflake;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.session.Session;
-import com.helphi.question.dao.QuestionDao;
-import com.helphi.question.dao.QuestionMapper;
-import com.helphi.question.dao.QuestionMapperBuilder;
 
 /** Spring config. */
 @Configuration
@@ -43,16 +45,29 @@ public class QuestionServiceConfig  {
     */
     public @Bean CqlSession session() {
         return CqlSession.builder()
-            .addContactPoint(new InetSocketAddress(hostname, dbPort))
-            .withLocalDatacenter(localDatacentre)
-            .withAuthCredentials(dbUsername, dbPassword)
-            .build();
+                .addContactPoint(new InetSocketAddress(hostname, dbPort))
+                .withLocalDatacenter(localDatacentre)
+                .withAuthCredentials(dbUsername, dbPassword)
+                .addTypeCodecs(new EnumNameCodec<QuestionType>(QuestionType.class))
+                .build();
     }
 
     public @Bean QuestionDao questionDao() {
         QuestionMapper questionMapper = new QuestionMapperBuilder(this.session()).build();
         return questionMapper.questionDao(keyspaceName);
     }
-    
 
+    public @Bean UserResponseDao userResponseDao() {
+        QuestionMapper questionMapper = new QuestionMapperBuilder(this.session()).build();
+        return questionMapper.userResponseDao(keyspaceName);
+    }
+
+    public @Bean ConditionCheckInDao conditionCheckInDao() {
+        QuestionMapper questionMapper = new QuestionMapperBuilder(this.session()).build();
+        return questionMapper.conditionCheckInDao(keyspaceName);
+    }
+
+    public @Bean Snowflake snowflake() {
+        return new Snowflake(1);
+    }
 }
