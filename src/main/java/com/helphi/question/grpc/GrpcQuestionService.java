@@ -6,10 +6,7 @@ import com.helphi.question.api.grpc.QuestionServiceGrpc.QuestionServiceImplBase;
 import com.helphi.question.api.Answer;
 import com.helphi.question.api.Question;
 import com.helphi.question.api.UserResponse;
-import com.helphi.question.api.mapper.CheckInMapper;
-import com.helphi.question.api.mapper.PatientStatusMapper;
-import com.helphi.question.api.mapper.QuestionMapper;
-import com.helphi.question.api.mapper.UserResponseMapper;
+import com.helphi.question.api.mapper.*;
 import com.helphi.question.svc.IquestionService;
 import io.grpc.stub.StreamObserver;
 import java.util.ArrayList;
@@ -144,9 +141,18 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
     public void addQuestion(QuestionRequest request, 
         StreamObserver<com.helphi.question.api.grpc.Question> responseObserver) {
 
+
+        AnswerMapper mapper = new AnswerMapper();
+        List<Answer> apiAnswers = new ArrayList<>();
+        for(com.helphi.question.api.grpc.Answer answer : request.getPossibleAnswersList()) {
+            apiAnswers.add(mapper.mapFromGrpc(answer));
+        }
+
+
         Question questionToAdd = new Question(Long.MIN_VALUE, request.getConditionId(),
-                QuestionType.valueOf(request.getQuestionType()), new HashSet<>(request.getPossibleAnswersList()),
-                new HashSet<>(request.getAnswerScoreRangeList()), request.getAnswerScoreList()
+                request.getQuestionText(), QuestionType.valueOf(request.getQuestionType()),
+                apiAnswers,
+                new HashSet<>(request.getAnswerScoreRangeList())
             );
 
         Question addedQuestion = questionService.addQuestion(questionToAdd);
@@ -282,6 +288,22 @@ public class GrpcQuestionService extends QuestionServiceImplBase {
         PatientStatusMapper mapper = new PatientStatusMapper();
 
         responseObserver.onNext(mapper.mapToGrpc(patientStatus));
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getCheckIn(GetConditionCheckInRequest request, StreamObserver<ConditionCheckIn> responseObserver) {
+        com.helphi.question.api.ConditionCheckIn checkIn = this.questionService.getConditionCheckIn(request.getConditionId());
+
+        if(checkIn == null){
+            responseObserver.onNext(null);
+        } else {
+            CheckInMapper mapper = new CheckInMapper();
+            responseObserver.onNext(mapper.mapToGrpc(checkIn));
+        }
+
+
+
         responseObserver.onCompleted();
     }
 

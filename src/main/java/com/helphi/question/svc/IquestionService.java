@@ -43,6 +43,8 @@ public interface IquestionService {
     public void addCheckIn(ConditionCheckIn checkIn);
     public void updateCheckIn(ConditionCheckIn checkIn);
 
+    public ConditionCheckIn getConditionCheckIn(String conditionId);
+
     public PatientStatus getCurrentStatus(String conditionId, String patientId);
     
 }

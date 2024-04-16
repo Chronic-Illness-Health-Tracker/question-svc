@@ -166,9 +166,18 @@ public class CassandraQuestionSvc implements IquestionService {
     }
 
     @Override
+    public ConditionCheckIn getConditionCheckIn(String conditionId) {
+       return this.conditionCheckInDao.getById(conditionId);
+    }
+
+    @Override
     public PatientStatus getCurrentStatus(String conditionId, String patientId) {
 
        UserResponse mostRecentResponse = this.userResponseDao.getMostRecentResponse(patientId, conditionId);
+
+       if(mostRecentResponse == null) {
+           return new PatientStatus(ConditionStatus.Normal, 0, new Date());
+       }
 
         long currentDayEarliestTimestamp = mostRecentResponse.getTimestamp().toEpochMilli() - this.snowflake.getCustomEpoch();
 
