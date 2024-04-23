@@ -69,7 +69,8 @@ public class CassandraQuestionSvc implements IquestionService {
     }
 
     public Question updateQuestion(long questionId, Question question) {
-        return null;
+        this.questionDao.update(question);
+        return this.questionDao.getById(question.getConditionId(), question.getQuestionId());
     }
 
     public RequestReply deleteQuestion(long questionId) {
@@ -126,6 +127,7 @@ public class CassandraQuestionSvc implements IquestionService {
             currentDayOfYear = timestamp.atZone(ZoneId.systemDefault()).getDayOfYear();
         }
 
+
         for(Iterator<UserResponse> it = responses.iterator(); it.hasNext(); ) {
             UserResponse response = it.next();
 
@@ -133,7 +135,7 @@ public class CassandraQuestionSvc implements IquestionService {
                  int dayOfYear = timestamp.atZone(ZoneId.systemDefault()).getDayOfYear();
 
                  ConditionStatus status;
-                 if(dayOfYear > currentDayOfYear || !it.hasNext()) {
+                 if(dayOfYear > currentDayOfYear) {
                      if(totalScore >= checkInDetails.getUnwellScore()) {
                          status = ConditionStatus.unwell;
                      } else if (totalScore >= checkInDetails.getSubclinicalScore()) {
@@ -149,7 +151,26 @@ public class CassandraQuestionSvc implements IquestionService {
                      totalScore = 0;
                  }
 
-                 totalScore += response.getAnswer().getAnswerScore();
+                 for (Answer answer: response.getAnswer()) {
+                     totalScore += answer.getAnswerScore();
+                 }
+
+                 if(!it.hasNext()) {
+                     if(totalScore >= checkInDetails.getUnwellScore()) {
+                         status = ConditionStatus.unwell;
+                     } else if (totalScore >= checkInDetails.getSubclinicalScore()) {
+                         status = ConditionStatus.Subclinical;
+                     } else {
+                         status = ConditionStatus.Normal;
+                     }
+
+                     PatientStatus patientStatus = new PatientStatus(status, totalScore, Date.from(timestamp));
+                     patientStatuses.add(patientStatus);
+
+                     currentDayOfYear = dayOfYear;
+                     totalScore = 0;
+                 }
+
         }
 
         return patientStatuses;
@@ -188,7 +209,9 @@ public class CassandraQuestionSvc implements IquestionService {
 
         int score = 0;
         for (UserResponse response: responses) {
-            score += response.getAnswer().getAnswerScore();
+            for(Answer answer: response.getAnswer()) {
+                score += answer.getAnswerScore();
+            }
         }
 
         ConditionCheckIn checkInDetails = this.conditionCheckInDao.getById(conditionId);
